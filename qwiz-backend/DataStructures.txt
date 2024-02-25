@@ -1,0 +1,53 @@
+Maps:
+
+1- connections
+
+used to store all active connections to the server created when the end user clicks on "create room" or "join room"
+
+Arrays:
+
+
+Objects:
+1- gameRooms
+
+    e.g. {
+        172eif: {
+            roomId: 172eif,
+            players: [xben,xben2]
+        }
+    }
+
+
+2- Quiz
+
+e.g. {
+    Number of Questions,
+    Select Category,
+    Select Difficulty,
+    Select Type,
+    Select Encoding,
+}
+
+3- Question
+e.g. {
+    
+      "type": "multiple",
+      "difficulty": "medium",
+      "category": "Entertainment: Japanese Anime &amp; Manga",
+      "question": "Which studio made Cowboy Bebop?",
+      "correct_answer": "Sunrise",
+      "incorrect_answers": [
+        "Bones",
+        "Madhouse",
+        "Pierriot"
+      ]
+    }
+}
+
+4- let quizState = {
+  status: 'waiting', // can be 'waiting', 'started', or 'ended'
+  questions: [], // array of questions
+  currentQuestionIndex: 0, // index of the current question in the questions array
+  playerAnswers: {}, // object mapping player usernames to their answers
+  scores: {}, // object mapping player usernames to their scores
+};
