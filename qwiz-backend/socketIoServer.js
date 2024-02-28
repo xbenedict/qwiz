@@ -2,6 +2,7 @@ const socketIo = require("socket.io");
 const connections = require("./src/Data Structures/connections");
 const generateRoomId = require("./src/Auxiliary Functions/generateRoomId");
 const gameRooms = require("./src/Data Structures/gameRooms");
+const axios = require("axios").default;
 
 const initializeSocketIoServer = (server) => {
   const io = socketIo(server, {
@@ -29,7 +30,7 @@ const initializeSocketIoServer = (server) => {
         creator: username,
       };
       socket.join(roomId);
-      socket.emit("roomCreated", gameRooms[roomId]);
+      io.in(roomId).emit("roomCreated", gameRooms[roomId]);
     });
 
     socket.on("joinRoom", ({ username, roomId }) => {
@@ -43,11 +44,45 @@ const initializeSocketIoServer = (server) => {
         console.log(connections);
 
         //sending the room data to the client
-        socket.emit("roomJoined", gameRooms[roomId]);
+        io.in(roomId).emit("roomJoined", gameRooms[roomId]);
 
-        socket.to(roomId).emit("playerJoined", gameRooms[roomId].players);
+        io.in(roomId).emit("playerJoined", gameRooms[roomId].players);
       } else {
-        socket.emit("joinError", "Room not found.");
+        io.in(roomId).emit("joinError", "Room not found.");
+      }
+    });
+
+    socket.on("quizSubmitted", async (quizFormData) => {
+      console.log(quizFormData);
+
+      try {
+        let difficultyParam;
+        if (quizFormData.difficulty === "Any Difficulty") {
+          difficultyParam = "";
+        } else {
+          difficultyParam = `&difficulty=${quizFormData.difficulty}`;
+        }
+        let categoryParam;
+        if (quizFormData.category === "Any Category") {
+          categoryParam = "";
+        } else {
+          categoryParam = `&category=${quizFormData.category}`;
+        }
+
+        let typeParam;
+        if (quizFormData.type === "Any Type") {
+          typeParam = "";
+        } else {
+          typeParam = `&type=${quizFormData.type}`;
+        }
+
+        const url = `https://opentdb.com/api.php?amount=${quizFormData.numberOfQuestions}${categoryParam}${difficultyParam}${typeParam}`;
+        const response = await axios.get(url);
+        console.log("the questions are", response.data.results);
+
+        io.in(quizFormData.roomId).emit("quizQuestions", response.data.results);
+      } catch (error) {
+        console.log(error);
       }
     });
 

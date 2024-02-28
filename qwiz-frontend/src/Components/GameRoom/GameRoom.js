@@ -12,6 +12,7 @@ import { initializeSocket } from "../../socketIoClient/socketIoClient";
 import QuizForm from "../Quiz/QuizForm";
 import ReadyOrStartButton from "../Logical/ReadyOrStartButton";
 import QuizFormConditional from "../Logical/QuizFormConditional";
+import QuizSocketHandler from "./QuizSocketHandler";
 
 const Container = styled("div")({
   display: "flex",
@@ -50,13 +51,12 @@ const GameRoom = () => {
 
   return (
     <Container>
+      <QuizSocketHandler />
       <Sidebar>
         <UserList />
         <ReadyOrStartButton />
       </Sidebar>
-      <MainArea>
-        <QuizFormConditional />
-      </MainArea>
+      <MainArea />
     </Container>
   );
 };

@@ -8,6 +8,7 @@ const quizFormSlice = createSlice({
     difficulty: "",
     type: "",
     encoding: "Default Encoding",
+    roomId: null,
   },
   reducers: {
     setQuizFormData(state, action) {

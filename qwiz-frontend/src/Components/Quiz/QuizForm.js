@@ -4,9 +4,10 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Button from "@mui/material/Button";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setQuizFormData as setReduxQuizFormData } from "../../Features/Quiz/quizFormSlice";
 import { styled } from "@mui/system";
+import { initializeSocket } from "../../socketIoClient/socketIoClient";
 
 const Container = styled("div")({
   display: "flex",
@@ -26,13 +27,16 @@ const StyledForm = styled("form")({
 
 export default function QuizForm() {
   const dispatch = useDispatch();
-
+  const roomId = useSelector((state) => {
+    return state.rooms.roomId;
+  });
   const [quizFormData, setQuizFormData] = React.useState({
     numberOfQuestions: "",
     category: "",
     difficulty: "",
     type: "",
     encoding: "Default Encoding",
+    roomId: roomId,
   });
 
   const handleChange = (event) => {
@@ -44,6 +48,9 @@ export default function QuizForm() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    const socket = initializeSocket();
+
+    socket.emit("quizSubmitted", quizFormData);
 
     dispatch(setReduxQuizFormData(quizFormData));
   };
@@ -81,41 +88,25 @@ export default function QuizForm() {
             label="Select Category:"
           >
             <MenuItem value={"Any Category"}>Any Category</MenuItem>
-            <MenuItem value={"General Knowledge"}>General Knowledge</MenuItem>
-            <MenuItem value={"Entertainment: Books"}>
-              Entertainment: Books
-            </MenuItem>
-            <MenuItem value={"Entertainment: Film"}>
-              Entertainment: Film
-            </MenuItem>
-            <MenuItem value={"Entertainment: Music"}>
-              Entertainment: Music
-            </MenuItem>
-            <MenuItem value={"Entertainment: Musicals & Theatres"}>
-              Entertainment: Musicals & Theatres
-            </MenuItem>
-            <MenuItem value={"Entertainment: Television"}>
-              Entertainment: Television
-            </MenuItem>
-            <MenuItem value={"Entertainment: Video Games"}>
-              Entertainment: Video Games
-            </MenuItem>
-            <MenuItem value={"Entertainment: Board Games"}>
-              Entertainment: Board Games
-            </MenuItem>
-            <MenuItem value={"Science & Nature"}>Science & Nature</MenuItem>
-            <MenuItem value={"Science: Computers"}>Science: Computers</MenuItem>
-            <MenuItem value={"Science: Mathematics"}>
-              Science: Mathematics
-            </MenuItem>
-            <MenuItem value={"Mythology"}>Mythology</MenuItem>
-            <MenuItem value={"Sports"}>Sports</MenuItem>
-            <MenuItem value={"Geography"}>Geography</MenuItem>
-            <MenuItem value={"History"}>History</MenuItem>
-            <MenuItem value={"Politics"}>Politics</MenuItem>
-            <MenuItem value={"Art"}>Art</MenuItem>
-            <MenuItem value={"Celebrities"}>Celebrities</MenuItem>
-            <MenuItem value={"Animals"}>Animals</MenuItem>
+            <MenuItem value={9}>General Knowledge</MenuItem>
+            <MenuItem value={10}>Entertainment: Books</MenuItem>
+            <MenuItem value={11}>Entertainment: Film</MenuItem>
+            <MenuItem value={12}>Entertainment: Music</MenuItem>
+            <MenuItem value={13}>Entertainment: Musicals & Theatres</MenuItem>
+            <MenuItem value={14}>Entertainment: Television</MenuItem>
+            <MenuItem value={15}>Entertainment: Video Games</MenuItem>
+            <MenuItem value={16}>Entertainment: Board Games</MenuItem>
+            <MenuItem value={17}>Science & Nature</MenuItem>
+            <MenuItem value={18}>Science: Computers</MenuItem>
+            <MenuItem value={19}>Science: Mathematics</MenuItem>
+            <MenuItem value={20}>Mythology</MenuItem>
+            <MenuItem value={21}>Sports</MenuItem>
+            <MenuItem value={22}>Geography</MenuItem>
+            <MenuItem value={23}>History</MenuItem>
+            <MenuItem value={24}>Politics</MenuItem>
+            <MenuItem value={25}>Art</MenuItem>
+            <MenuItem value={26}>Celebrities</MenuItem>
+            <MenuItem value={27}>Animals</MenuItem>
           </Select>
         </FormControl>
         <FormControl variant="standard" sx={{ m: 1, minWidth: 220 }}>
@@ -129,9 +120,9 @@ export default function QuizForm() {
             label="Select Difficulty:"
           >
             <MenuItem value={"Any Difficulty"}>Any Difficulty</MenuItem>
-            <MenuItem value={"Easy"}>Easy</MenuItem>
-            <MenuItem value={"Medium"}>Medium</MenuItem>
-            <MenuItem value={"Hard"}>Hard</MenuItem>
+            <MenuItem value={"easy"}>Easy</MenuItem>
+            <MenuItem value={"medium"}>Medium</MenuItem>
+            <MenuItem value={"hard"}>Hard</MenuItem>
           </Select>
         </FormControl>
         <FormControl variant="standard" sx={{ m: 1, minWidth: 220 }}>
@@ -145,8 +136,8 @@ export default function QuizForm() {
             label="Select Type:"
           >
             <MenuItem value={"Any Type"}>Any Type</MenuItem>
-            <MenuItem value={"Multiple Choice"}>Multiple Choice</MenuItem>
-            <MenuItem value={"True / False"}>True / False</MenuItem>
+            <MenuItem value={"multiple"}>Multiple Choice</MenuItem>
+            <MenuItem value={"boolean"}>True / False</MenuItem>
           </Select>
         </FormControl>
         <Button
