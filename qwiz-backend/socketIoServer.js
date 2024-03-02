@@ -4,6 +4,7 @@ const generateRoomId = require("./src/Auxiliary Functions/generateRoomId");
 const gameRooms = require("./src/Data Structures/gameRooms");
 const hideAnswers = require("./src/Auxiliary Functions/hideAnswers");
 const axios = require("axios").default;
+const arraysMatch = require("./src/Auxiliary Functions/arraysMatch");
 
 const initializeSocketIoServer = (server) => {
   const io = socketIo(server, {
@@ -28,6 +29,7 @@ const initializeSocketIoServer = (server) => {
         roomId,
         username,
         players: [username],
+        readyPlayers: [],
         creator: username,
       };
       socket.join(roomId);
@@ -45,11 +47,9 @@ const initializeSocketIoServer = (server) => {
         console.log(connections);
 
         //sending the room data to the client
-        io.in(roomId).emit("roomJoined", gameRooms[roomId]);
+        socket.emit("roomJoined", gameRooms[roomId]);
 
         io.in(roomId).emit("playerJoined", gameRooms[roomId].players);
-      } else {
-        io.in(roomId).emit("joinError", "Room not found.");
       }
     });
 
@@ -86,6 +86,43 @@ const initializeSocketIoServer = (server) => {
         io.in(quizFormData.roomId).emit("quizQuestions", hiddenAnswersArray);
       } catch (error) {
         console.log(error);
+      }
+    });
+
+    socket.on("playerReadyStatus", (playerReadyStatus) => {
+      console.log(playerReadyStatus);
+      const room = Object.values(gameRooms).find((room) => {
+        return room.players.includes(playerReadyStatus.username);
+      });
+
+      if (playerReadyStatus.isPlayerReady === true) {
+        gameRooms[room.roomId].readyPlayers.push(playerReadyStatus.username);
+      }
+
+      if (playerReadyStatus.isPlayerReady === false) {
+        for (
+          let i = gameRooms[room.roomId].readyPlayers.length - 1;
+          i >= 0;
+          i--
+        ) {
+          if (
+            gameRooms[room.roomId].readyPlayers[i] ===
+            playerReadyStatus.username
+          ) {
+            gameRooms[room.roomId].readyPlayers.splice(i, 1);
+          }
+        }
+      }
+
+      console.log(gameRooms[room.roomId]);
+
+      if (
+        arraysMatch(
+          gameRooms[room.roomId].readyPlayers,
+          gameRooms[room.roomId].players,
+        )
+      ) {
+        console.log("arrays match exactly, every user is ready");
       }
     });
 

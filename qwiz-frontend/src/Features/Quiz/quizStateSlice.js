@@ -11,27 +11,18 @@ const quizStateSlice = createSlice({
     isPlayerReady: false,
   },
   reducers: {
-    setQuizStateData(state, action) {
-      if (action.payload.currentQuestionIndex !== undefined) {
-        state.currentQuestionIndex = action.payload.currentQuestionIndex;
-      }
-      if (action.payload.playerAnswers) {
-        state.playerAnswers = action.payload.playerAnswers;
-      }
-      if (action.payload.scores) {
-        state.scores = action.payload.scores;
-      }
-      state.isPlayerReady = action.payload.isPlayerReady;
-    },
     setStatus(state, action) {
       state.status = action.payload;
     },
     setQuestions(state, action) {
       state.questions = action.payload;
     },
+    setIsPlayerReady(state, action) {
+      state.isPlayerReady = action.payload;
+    },
   },
 });
 
-export const { setQuizStateData, setStatus, setQuestions } =
+export const { setStatus, setQuestions, setIsPlayerReady } =
   quizStateSlice.actions;
 export default quizStateSlice.reducer;
