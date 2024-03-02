@@ -14,6 +14,14 @@ const ReadyOrStartButton = () => {
     }
   }
 
+  if (quizStatus === "questionsReceived") {
+    if (creator.creator === creator.username) {
+      return <StartBattleButton />;
+    } else {
+      return <ReadyButton />;
+    }
+  }
+
   return null;
 };
 

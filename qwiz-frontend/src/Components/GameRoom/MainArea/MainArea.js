@@ -5,6 +5,7 @@ import { styled } from "@mui/system";
 import { initializeSocket } from "../../../socketIoClient/socketIoClient";
 import QuestionCardConditional from "../../Quiz/QuestionCardConditional";
 import QuizFormConditional from "../../Logical/QuizFormConditional";
+import QuestionsReceivedMessage from "../../Quiz/QuestionsReceivedMessage";
 
 const MainAreaContainer = styled("div")({
   display: "flex",
@@ -19,6 +20,7 @@ const MainArea = () => {
   return (
     <MainAreaContainer>
       <QuizFormConditional />
+      <QuestionsReceivedMessage />
       <QuestionCardConditional />
     </MainAreaContainer>
   );

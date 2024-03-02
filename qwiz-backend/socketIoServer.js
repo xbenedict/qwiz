@@ -2,6 +2,7 @@ const socketIo = require("socket.io");
 const connections = require("./src/Data Structures/connections");
 const generateRoomId = require("./src/Auxiliary Functions/generateRoomId");
 const gameRooms = require("./src/Data Structures/gameRooms");
+const hideAnswers = require("./src/Auxiliary Functions/hideAnswers");
 const axios = require("axios").default;
 
 const initializeSocketIoServer = (server) => {
@@ -80,7 +81,9 @@ const initializeSocketIoServer = (server) => {
         const response = await axios.get(url);
         console.log("the questions are", response.data.results);
 
-        io.in(quizFormData.roomId).emit("quizQuestions", response.data.results);
+        let hiddenAnswersArray = hideAnswers(response.data.results);
+
+        io.in(quizFormData.roomId).emit("quizQuestions", hiddenAnswersArray);
       } catch (error) {
         console.log(error);
       }

@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { List, ListItem, ListItemText } from "@mui/material";
+import { List, ListItem, ListItemText, Typography } from "@mui/material";
 import styled from "@emotion/styled";
 
 const Container = styled("div")({
@@ -24,7 +24,20 @@ const UserList = () => {
       >
         {players.map((username) => (
           <ListItem key={username}>
-            <ListItemText primary={username} />
+            <ListItemText
+              primary={
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: "white",
+                    fontSize: "30px",
+                    fontFamily: "Roboto, sans-serif",
+                  }}
+                >
+                  {username}
+                </Typography>
+              }
+            />
           </ListItem>
         ))}
       </List>
