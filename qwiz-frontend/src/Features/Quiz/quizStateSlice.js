@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const quizStateSlice = createSlice({
   name: "quizState",
   initialState: {
-    status: "waiting", // can be 'waiting', 'questionsReceived, 'started', or 'ended'
+    status: "waiting", // can be 'waiting', 'questionsReceived, 'loading', 'started', or 'ended'
     questions: [], // array of questions
     currentQuestionIndex: 0, // index of the current question in the questions array
     playerAnswers: {}, // object containing the answers to the questions that the user answered

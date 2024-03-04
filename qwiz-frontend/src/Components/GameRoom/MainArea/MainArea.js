@@ -6,6 +6,7 @@ import { initializeSocket } from "../../../socketIoClient/socketIoClient";
 import QuestionCardConditional from "../../Quiz/QuestionCardConditional";
 import QuizFormConditional from "../../Logical/QuizFormConditional";
 import QuestionsReceivedMessage from "../../Quiz/QuestionsReceivedMessage";
+import CountdownTimerConditional from "../../Logical/CountdownTimerConditional";
 
 const MainAreaContainer = styled("div")({
   display: "flex",
@@ -22,6 +23,7 @@ const MainArea = () => {
       <QuizFormConditional />
       <QuestionsReceivedMessage />
       <QuestionCardConditional />
+      <CountdownTimerConditional />
     </MainAreaContainer>
   );
 };

@@ -14,6 +14,8 @@ const initializeSocketIoServer = (server) => {
     },
   });
 
+  let timerId;
+
   io.on("connection", (socket) => {
     socket.on("createRoom", (username) => {
       console.log(`New user ${username} connected, Socket ID: ${socket.id}`);
@@ -112,6 +114,7 @@ const initializeSocketIoServer = (server) => {
             gameRooms[room.roomId].readyPlayers.splice(i, 1);
           }
         }
+        clearTimeout(timerId);
       }
 
       console.log(gameRooms[room.roomId]);
@@ -123,6 +126,14 @@ const initializeSocketIoServer = (server) => {
         )
       ) {
         console.log("arrays match exactly, every user is ready");
+
+        io.in(room.roomId).emit("countdownStarted", { countdownTimer: 5000 });
+
+        console.log("countdownStarted event emitted to client");
+
+        setTimeout(() => {
+          io.in(room.roomId).emit("quizStarted");
+        }, 5000);
       }
     });
 

@@ -18,11 +18,11 @@ const StartBattleButton = () => {
   };
   const handleClick = () => {
     dispatch(setIsPlayerReady(!isPlayerReady));
-    if (quizState === "questionsReceived" && isPlayerReady === false) {
+    if (isPlayerReady === false) {
       playerReadyStatus.isPlayerReady = true;
       socket.emit("playerReadyStatus", playerReadyStatus);
     }
-    if (quizState === "questionsReceived" && isPlayerReady === true) {
+    if (isPlayerReady === true) {
       playerReadyStatus.isPlayerReady = false;
 
       socket.emit("playerReadyStatus", playerReadyStatus);
