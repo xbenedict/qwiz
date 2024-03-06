@@ -4,8 +4,11 @@ import { useSelector } from "react-redux";
 const QuestionsReceivedMessage = () => {
   const quizStatus = useSelector((state) => state.quizState.status);
   const creator = useSelector((state) => state.rooms);
+  const areAllPlayersReady = useSelector(
+    (state) => state.quizState.areAllPlayersReady,
+  );
 
-  if (quizStatus === "questionsReceived") {
+  if (quizStatus === "questionsReceived" && !areAllPlayersReady) {
     let message;
     if (creator.creator === creator.username) {
       message =

@@ -115,6 +115,7 @@ const initializeSocketIoServer = (server) => {
           }
         }
         clearTimeout(timerId);
+        io.in(room.roomId).emit("countdownStopped");
       }
 
       console.log(gameRooms[room.roomId]);

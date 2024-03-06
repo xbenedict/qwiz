@@ -1,49 +1,73 @@
-import { Typography } from "@mui/material";
-import { useEffect } from "react";
-import { Box } from "@mui/material";
-import { useState } from "react";
+import { Typography, Box } from "@mui/material";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setStatus,
+  setAreAllPlayersReady,
+} from "../../Features/Quiz/quizStateSlice";
 import { initializeSocket } from "../../socketIoClient/socketIoClient";
-import { useDispatch } from "react-redux";
-import { setStatus } from "../../Features/Quiz/quizStateSlice";
-import { useSelector } from "react-redux";
 
 const CountdownTimerConditional = () => {
   const [timer, setTimer] = useState(null);
   const dispatch = useDispatch();
   const quizStatus = useSelector((state) => state.quizState.status);
+  const areAllPlayersReady = useSelector(
+    (state) => state.quizState.areAllPlayersReady,
+  );
+
+  const socket = initializeSocket();
 
   useEffect(() => {
-    const socket = initializeSocket();
-    let interval;
-    socket.on("countdownStarted", ({ countdownTimer }) => {
-      dispatch(setStatus("loading"));
-      console.log("countdownStarted event received, quizStatus =", quizStatus);
+    socket.on("countdownStarted", handleCountdownStarted);
+    socket.on("countdownStopped", handleCountdownStopped);
 
-      setTimer(countdownTimer / 1000);
+    return () => {
+      socket.off("countdownStarted", handleCountdownStarted);
+      socket.off("countdownStopped", handleCountdownStopped);
+    };
+  }, []);
+
+  useEffect(() => {
+    let interval = null;
+
+    if (areAllPlayersReady && quizStatus === "questionsReceived") {
       interval = setInterval(() => {
-        setTimer((prevState) => {
-          return prevState - 1;
+        setTimer((prevTimer) => {
+          if (prevTimer <= 1) {
+            clearInterval(interval);
+            return 0;
+          }
+          return prevTimer - 1;
         });
       }, 1000);
+    }
 
-      setTimeout(() => {
-        clearInterval(interval);
-      }, countdownTimer);
-    });
     return () => {
       if (interval) {
         clearInterval(interval);
       }
-      socket.off("countdownStarted");
     };
-  }, []);
+  }, [areAllPlayersReady, quizStatus]);
 
-  if (quizStatus === "loading") {
+  const handleCountdownStarted = ({ countdownTimer }) => {
+    setTimer(countdownTimer / 1000);
+    dispatch(setAreAllPlayersReady(true));
+  };
+
+  const handleCountdownStopped = () => {
+    dispatch(setAreAllPlayersReady(false));
+  };
+
+  if (
+    areAllPlayersReady &&
+    quizStatus === "questionsReceived" &&
+    timer !== null
+  ) {
     return (
       <Box>
-        <Typography
-          sx={{ color: "white", fontSize: "2em" }}
-        >{`The quiz battle will start in ${timer} seconds!`}</Typography>
+        <Typography sx={{ color: "white", fontSize: "2em" }}>
+          {`The quiz battle will start in ${timer} seconds!`}
+        </Typography>
       </Box>
     );
   }

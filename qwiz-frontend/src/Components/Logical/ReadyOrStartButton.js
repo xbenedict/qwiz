@@ -22,14 +22,6 @@ const ReadyOrStartButton = () => {
     }
   }
 
-  if (quizStatus === "loading") {
-    if (creator.creator === creator.username) {
-      return <StartBattleButton />;
-    } else {
-      return <ReadyButton />;
-    }
-  }
-
   return null;
 };
 

@@ -9,6 +9,7 @@ const quizStateSlice = createSlice({
     playerAnswers: {}, // object containing the answers to the questions that the user answered
     scores: {}, // object containing the player score for the quiz
     isPlayerReady: false,
+    areAllPlayersReady: false,
   },
   reducers: {
     setStatus(state, action) {
@@ -20,9 +21,16 @@ const quizStateSlice = createSlice({
     setIsPlayerReady(state, action) {
       state.isPlayerReady = action.payload;
     },
+    setAreAllPlayersReady(state, action) {
+      state.areAllPlayersReady = action.payload;
+    },
   },
 });
 
-export const { setStatus, setQuestions, setIsPlayerReady } =
-  quizStateSlice.actions;
+export const {
+  setStatus,
+  setQuestions,
+  setIsPlayerReady,
+  setAreAllPlayersReady,
+} = quizStateSlice.actions;
 export default quizStateSlice.reducer;
