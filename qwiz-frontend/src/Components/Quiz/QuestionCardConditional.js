@@ -1,9 +1,20 @@
-import { UseSelector, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import QuestionCard from "./QuestionCard";
+import { initializeSocket } from "../../socketIoClient/socketIoClient";
+import { setStatus } from "../../Features/Quiz/quizStateSlice";
 
 const QuestionCardConditional = () => {
+  const dispatch = useDispatch();
+
   const quizState = useSelector((state) => {
     return state.quizState;
+  });
+
+  const socket = initializeSocket();
+
+  socket.on("quizStarted", () => {
+    console.log("quizStarted event received from server");
+    dispatch(setStatus("started"));
   });
 
   if (quizState.status === "started") {

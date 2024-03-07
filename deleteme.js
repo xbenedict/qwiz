@@ -15,8 +15,6 @@ const CountdownTimerConditional = () => {
     (state) => state.quizState.areAllPlayersReady,
   );
 
-  const username = useSelector((state) => state.rooms.username);
-
   const socket = initializeSocket();
 
   useEffect(() => {
@@ -24,8 +22,8 @@ const CountdownTimerConditional = () => {
     socket.on("countdownStopped", handleCountdownStopped);
 
     return () => {
-      socket.off("countdownStarted");
-      socket.off("countdownStopped");
+      socket.off("countdownStarted", handleCountdownStarted);
+      socket.off("countdownStopped", handleCountdownStopped);
     };
   }, []);
 
@@ -37,8 +35,9 @@ const CountdownTimerConditional = () => {
         setTimer((prevTimer) => {
           if (prevTimer <= 1) {
             clearInterval(interval);
+            // Emit the event only if the timer reaches zero and all players are still ready
             if (prevTimer === 1 && areAllPlayersReady) {
-              socket.emit("clientReadyForQuizStart", { username });
+              socket.emit("clientReadyForQuizStart");
             }
             return 0;
           }
@@ -52,10 +51,9 @@ const CountdownTimerConditional = () => {
         clearInterval(interval);
       }
     };
-  }, [areAllPlayersReady, quizStatus]);
+  }, [areAllPlayersReady, quizStatus, socket]); // Add socket to the dependencies array
 
   const handleCountdownStarted = ({ countdownTimer }) => {
-    console.log("countdownStarted event received from server");
     setTimer(countdownTimer / 1000);
     dispatch(setAreAllPlayersReady(true));
   };

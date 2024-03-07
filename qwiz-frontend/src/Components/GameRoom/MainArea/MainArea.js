@@ -7,7 +7,7 @@ import QuestionCardConditional from "../../Quiz/QuestionCardConditional";
 import QuizFormConditional from "../../Logical/QuizFormConditional";
 import QuestionsReceivedMessage from "../../Quiz/QuestionsReceivedMessage";
 import CountdownTimerConditional from "../../Logical/CountdownTimerConditional";
-
+import Results from "../../Logical/Results";
 const MainAreaContainer = styled("div")({
   display: "flex",
   flex: 1,
@@ -22,8 +22,9 @@ const MainArea = () => {
     <MainAreaContainer>
       <QuizFormConditional />
       <QuestionsReceivedMessage />
-      <QuestionCardConditional />
       <CountdownTimerConditional />
+      <QuestionCardConditional />
+      <Results />
     </MainAreaContainer>
   );
 };

@@ -24,6 +24,13 @@ const quizStateSlice = createSlice({
     setAreAllPlayersReady(state, action) {
       state.areAllPlayersReady = action.payload;
     },
+    setCurrentQuestionIndex(state, action) {
+      if (state.currentQuestionIndex < state.questions.length - 1) {
+        state.currentQuestionIndex += 1;
+      } else {
+        state.status = "ended";
+      }
+    },
   },
 });
 
@@ -32,5 +39,6 @@ export const {
   setQuestions,
   setIsPlayerReady,
   setAreAllPlayersReady,
+  setCurrentQuestionIndex,
 } = quizStateSlice.actions;
 export default quizStateSlice.reducer;

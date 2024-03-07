@@ -114,7 +114,6 @@ const initializeSocketIoServer = (server) => {
             gameRooms[room.roomId].readyPlayers.splice(i, 1);
           }
         }
-        clearTimeout(timerId);
         io.in(room.roomId).emit("countdownStopped");
       }
 
@@ -131,11 +130,16 @@ const initializeSocketIoServer = (server) => {
         io.in(room.roomId).emit("countdownStarted", { countdownTimer: 5000 });
 
         console.log("countdownStarted event emitted to client");
-
-        setTimeout(() => {
-          io.in(room.roomId).emit("quizStarted");
-        }, 5000);
       }
+    });
+
+    socket.on("clientReadyForQuizStart", ({ username }) => {
+      console.log("clientReadyForQuizStart event received from client");
+      const room = Object.values(gameRooms).find((room) => {
+        return room.players.includes(username);
+      });
+      io.in(room.roomId).emit("quizStarted");
+      gameRooms[room.roomId].readyPlayers.length = 0;
     });
 
     socket.on("disconnect", () => {
