@@ -29,6 +29,7 @@ const quizStateSlice = createSlice({
         state.currentQuestionIndex += 1;
       } else {
         state.status = "ended";
+        state.currentQuestionIndex = 0;
       }
     },
   },

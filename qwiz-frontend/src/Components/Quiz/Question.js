@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 
 const Question = () => {
@@ -10,9 +11,15 @@ const Question = () => {
   });
 
   return (
-    <div>
-      <h1>{questionText[currentQuestionIndex].question}</h1>
-    </div>
+    <Typography
+      sx={{
+        color: "white",
+        fontSize: "24px",
+        fontFamily: "Roboto, sans-serif",
+      }}
+    >
+      {questionText[currentQuestionIndex].question}
+    </Typography>
   );
 };
 

@@ -9,7 +9,15 @@ const AnswerChoice = (props) => {
   };
 
   return (
-    <Button size="large" onClick={handleClick}>
+    <Button
+      size="large"
+      onClick={handleClick}
+      sx={{
+        color: "#ece8ef",
+        fontSize: "24px",
+        fontFamily: "Roboto, sans-serif",
+      }}
+    >
       {props.answerChoice}
     </Button>
   );

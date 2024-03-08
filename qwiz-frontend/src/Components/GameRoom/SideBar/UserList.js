@@ -30,7 +30,7 @@ const UserList = () => {
                   variant="body1"
                   sx={{
                     color: "white",
-                    fontSize: "30px",
+                    fontSize: "24px",
                     fontFamily: "Roboto, sans-serif",
                   }}
                 >

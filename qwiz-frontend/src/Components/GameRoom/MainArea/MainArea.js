@@ -8,11 +8,12 @@ import QuizFormConditional from "../../Logical/QuizFormConditional";
 import QuestionsReceivedMessage from "../../Quiz/QuestionsReceivedMessage";
 import CountdownTimerConditional from "../../Logical/CountdownTimerConditional";
 import Results from "../../Logical/Results";
+import LiveScoreBoardConditional from "../../Logical/LiveScoreBoardConditional";
 const MainAreaContainer = styled("div")({
   display: "flex",
   flex: 1,
   flexDirection: "column",
-  backgroundColor: "#3C4142",
+  backgroundColor: "#3c4142",
   justifyContent: "center",
   alignItems: "center",
 });
@@ -23,6 +24,7 @@ const MainArea = () => {
       <QuizFormConditional />
       <QuestionsReceivedMessage />
       <CountdownTimerConditional />
+      <LiveScoreBoardConditional />
       <QuestionCardConditional />
       <Results />
     </MainAreaContainer>
