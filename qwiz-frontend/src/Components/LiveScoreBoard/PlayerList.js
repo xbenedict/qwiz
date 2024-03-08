@@ -20,7 +20,7 @@ const PlayerList = () => {
             }}
           >
             <Typography sx={styles.typographyStyle}>{player}</Typography>
-            <PlayerScore />
+            <PlayerScore player={player} />
           </Box>
         );
       })}

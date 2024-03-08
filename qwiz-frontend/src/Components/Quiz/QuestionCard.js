@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import styled from "@emotion/styled";
 
 const GlassCard = styled(Card)({
-  backgroundColor: "rgba(60, 65, 66, 0.1)",
+  backgroundColor: "rgba(0, 0, 0, 0.1)",
   color: "#ece8ef",
   backdropFilter: "blur(10px)",
   boxShadow: "0 8px 32px 0 rgba(255, 255, 255, 1)",

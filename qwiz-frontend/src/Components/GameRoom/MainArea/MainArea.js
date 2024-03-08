@@ -14,6 +14,7 @@ const MainAreaContainer = styled("div")({
   flex: 1,
   flexDirection: "column",
   backgroundColor: "#3c4142",
+  backgroundSize: "cover",
   justifyContent: "center",
   alignItems: "center",
 });

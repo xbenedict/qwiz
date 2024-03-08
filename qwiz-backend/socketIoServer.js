@@ -5,6 +5,8 @@ const gameRooms = require("./src/Data Structures/gameRooms");
 const hideAnswers = require("./src/Auxiliary Functions/hideAnswers");
 const axios = require("axios").default;
 const arraysMatch = require("./src/Auxiliary Functions/arraysMatch");
+const checkAnswer = require("./src/Auxiliary Functions/checkAnswer");
+const scoreAnswer = require("./src/Auxiliary Functions/scoreAnswer");
 
 const initializeSocketIoServer = (server) => {
   const io = socketIo(server, {
@@ -15,8 +17,9 @@ const initializeSocketIoServer = (server) => {
   });
 
   let timerId;
-
+  let response;
   io.on("connection", (socket) => {
+    let score = 0;
     socket.on("createRoom", (username) => {
       console.log(`New user ${username} connected, Socket ID: ${socket.id}`);
 
@@ -33,6 +36,9 @@ const initializeSocketIoServer = (server) => {
         players: [username],
         readyPlayers: [],
         creator: username,
+        scores: {
+          [username]: 0,
+        },
       };
       socket.join(roomId);
       io.in(roomId).emit("roomCreated", gameRooms[roomId]);
@@ -42,6 +48,7 @@ const initializeSocketIoServer = (server) => {
       if (gameRooms[roomId]) {
         gameRooms[roomId].players.push(username);
         gameRooms[roomId].username = username;
+        gameRooms[roomId].scores[username] = 0;
         socket.join(roomId);
 
         //store new connection in the connections map
@@ -80,7 +87,7 @@ const initializeSocketIoServer = (server) => {
         }
 
         const url = `https://opentdb.com/api.php?amount=${quizFormData.numberOfQuestions}${categoryParam}${difficultyParam}${typeParam}`;
-        const response = await axios.get(url);
+        response = await axios.get(url);
         console.log("the questions are", response.data.results);
 
         let hiddenAnswersArray = hideAnswers(response.data.results);
@@ -141,6 +148,28 @@ const initializeSocketIoServer = (server) => {
       io.in(room.roomId).emit("quizStarted");
       gameRooms[room.roomId].readyPlayers.length = 0;
     });
+
+    socket.on(
+      // response.data.results[currentQuestionIndex].correct_answer
+      "answerSubmitted",
+      ({ answerChoice, currentQuestionIndex, username, roomId }) => {
+        const storedAnswer =
+          response.data.results[currentQuestionIndex].correct_answer;
+        const questionType = response.data.results[currentQuestionIndex].type;
+        const questionDifficulty =
+          response.data.results[currentQuestionIndex].difficulty;
+        console.log(answerChoice, currentQuestionIndex, username, roomId);
+        const answerResult = checkAnswer(answerChoice, storedAnswer);
+        score = scoreAnswer(
+          answerResult,
+          questionType,
+          questionDifficulty,
+          score,
+        );
+        gameRooms[roomId].scores[username] = score;
+        io.in(roomId).emit("currentScore", gameRooms[roomId].scores);
+      },
+    );
 
     socket.on("disconnect", () => {
       const username = [...connections].find(([, socketId]) => {
