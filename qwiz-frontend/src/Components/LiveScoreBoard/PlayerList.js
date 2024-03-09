@@ -3,15 +3,34 @@ import PlayerScoreCard from "./PlayerScoreCard";
 import { useSelector } from "react-redux";
 import styles from "../../Styles/styles";
 import PlayerScore from "./PlayerScore";
+import { useEffect, useState } from "react";
 
 const PlayerList = () => {
   const players = useSelector((state) => {
     return state.rooms.players;
   });
 
+  const currentScores = useSelector((state) => {
+    return state.quizState.scores;
+  });
+
+  const [sortedArray, setSortedArray] = useState([]);
+
+  const sortArray = (players, currentScores) => {
+    const sorted = [...players].sort((a, b) => {
+      return currentScores[b] - currentScores[a];
+    });
+
+    setSortedArray(sorted);
+  };
+
+  useEffect(() => {
+    sortArray(players, currentScores);
+  }, [currentScores]);
+
   return (
     <Box>
-      {players.map((player) => {
+      {sortedArray.map((player) => {
         return (
           <Box
             sx={{

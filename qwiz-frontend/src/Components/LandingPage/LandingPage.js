@@ -16,7 +16,8 @@ const Container = styled("div")({
   alignItems: "center",
   backgroundColor: "#3c4142",
   height: "100vh",
-  width: "100vw",
+  overflow: "hidden",
+  // width: "100vw",
 });
 
 const LandingPage = () => {

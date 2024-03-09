@@ -7,7 +7,7 @@ const quizStateSlice = createSlice({
     questions: [], // array of questions
     currentQuestionIndex: 0, // index of the current question in the questions array
     playerAnswers: {}, // object containing the answers to the questions that the user answered
-    scores: {}, // object containing the player score for the quiz
+    scores: {}, // object containing the players scores for the quiz
     isPlayerReady: false,
     areAllPlayersReady: false,
   },
@@ -32,6 +32,9 @@ const quizStateSlice = createSlice({
         state.currentQuestionIndex = 0;
       }
     },
+    setScores(state, action) {
+      state.scores = action.payload;
+    },
   },
 });
 
@@ -41,5 +44,6 @@ export const {
   setIsPlayerReady,
   setAreAllPlayersReady,
   setCurrentQuestionIndex,
+  setScores,
 } = quizStateSlice.actions;
 export default quizStateSlice.reducer;
