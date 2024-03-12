@@ -4,7 +4,7 @@ let socket;
 
 export const initializeSocket = () => {
   if (!socket) {
-    socket = io("http://94.249.48.62:35954");
+    socket = io("http://192.168.1.42:5000");
     //original socket ip below, use when developing locally
     // socket = io("http://192.168.1.42:5000");
   }

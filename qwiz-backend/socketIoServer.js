@@ -7,6 +7,10 @@ const axios = require("axios").default;
 const arraysMatch = require("./src/Auxiliary Functions/arraysMatch");
 const checkAnswer = require("./src/Auxiliary Functions/checkAnswer");
 const scoreAnswer = require("./src/Auxiliary Functions/scoreAnswer");
+const Quiz = require("./src/Data Structures/Quiz");
+const rooms = require("./src/Data Structures/rooms");
+const User = require("./src/Data Structures/User");
+const Room = require("./src/Data Structures/Room");
 
 const initializeSocketIoServer = (server) => {
   const io = socketIo(server, {
@@ -15,84 +19,128 @@ const initializeSocketIoServer = (server) => {
       methods: ["GET", "POST"],
     },
   });
-
-  let timerId;
+  //recheck if response is correctly placed here and change it accordingly
   let response;
+  let room;
+  let quiz;
   io.on("connection", (socket) => {
-    let score = 0;
+    let user;
+
     socket.on("createRoom", (username) => {
-      console.log(`New user ${username} connected, Socket ID: ${socket.id}`);
+      if (!connections.has(username)) {
+        //generate new roomId
+        const roomId = generateRoomId();
+        room = new Room(username, roomId);
+        //create new user instance
+        user = new User(username, socket.id, roomId);
+        console.log(
+          `New user ${user.username} connected, Socket ID: ${user.socketid}, Room Id: ${user.roomId}`,
+        );
+        //store new connection in the connections map
+        connections.set(user.username, {
+          socketId: user.socketId,
+          roomId: user.roomId,
+        });
+        console.log("connections map: ", connections);
 
-      //store new connection in the connections map
-      connections.set(username, socket.id);
-      console.log(connections);
+        //store new room in the rooms map
 
-      const roomId = generateRoomId();
-      //delete the console.log(roomID) line
-      console.log(roomId);
-      gameRooms[roomId] = {
-        roomId,
-        username,
-        players: [username],
-        readyPlayers: [],
-        creator: username,
-        scores: {
-          [username]: 0,
-        },
-      };
-      socket.join(roomId);
-      io.in(roomId).emit("roomCreated", gameRooms[roomId]);
+        if (!rooms.has(roomId)) {
+          rooms.set(roomId, room);
+          console.log("The room just created is: ", room);
+          socket.join(roomId);
+          io.in(roomId).emit("roomCreated", room);
+        } else {
+          console.log(`Room ${roomId} already exists, try creating a new room`);
+        }
+      } else {
+        console.log(
+          `username ${username} already exists, please choose a different username.`,
+        );
+      }
+      //delete this comment once code file is checked
+      // gameRooms[roomId] = {
+      //   roomId,
+      //   username,
+      //   players: [username],
+      //   readyPlayers: [],
+      //   creator: username,
+      //   scores: {
+      //     [username]: 0,
+      //   },
+      // };
     });
 
     socket.on("joinRoom", ({ username, roomId }) => {
-      if (gameRooms[roomId]) {
-        gameRooms[roomId].players.push(username);
-        gameRooms[roomId].username = username;
-        gameRooms[roomId].scores[username] = 0;
-        socket.join(roomId);
+      if (!connections.has(username)) {
+        if (rooms.has(roomId)) {
+          user = new User(username, socket.id, roomId);
+          room.players.push(username);
+          room.username = username;
+          room.scores[username] = 0;
+          socket.join(roomId);
+          //store new connection in the connections map
+          connections.set(user.username, {
+            socketId: user.socketId,
+            roomId: user.roomId,
+          });
+          console.log("connections map: ", connections);
+          console.log("the user that joined is: ", user);
+          console.log("the room data is: ", room);
 
-        //store new connection in the connections map
-        connections.set(username, socket.id);
-        console.log(connections);
-
-        //sending the room data to the client
-        socket.emit("roomJoined", gameRooms[roomId]);
-
-        io.in(roomId).emit("playerJoined", gameRooms[roomId].players);
+          //sending the room data to the client
+          socket.emit("roomJoined", room);
+          //emitting a playerJoined event
+          io.in(roomId).emit("playerJoined", room.players);
+        } else {
+          console.log(`Room ${roomId} does not exist, please retry.`);
+        }
+      } else {
+        console.log(
+          `username ${username} already exists, please choose a different username.`,
+        );
       }
     });
 
     socket.on("quizSubmitted", async (quizFormData) => {
       console.log(quizFormData);
 
+      quiz = new Quiz(quizFormData);
+
+      console.log("the quiz object on the server is ", quiz);
+
       try {
         let difficultyParam;
-        if (quizFormData.difficulty === "Any Difficulty") {
+        if (quiz.quizFormData.difficulty === "Any Difficulty") {
           difficultyParam = "";
         } else {
-          difficultyParam = `&difficulty=${quizFormData.difficulty}`;
+          difficultyParam = `&difficulty=${quiz.quizFormData.difficulty}`;
         }
         let categoryParam;
-        if (quizFormData.category === "Any Category") {
+        if (quiz.quizFormData.category === "Any Category") {
           categoryParam = "";
         } else {
-          categoryParam = `&category=${quizFormData.category}`;
+          categoryParam = `&category=${quiz.quizFormData.category}`;
         }
 
         let typeParam;
-        if (quizFormData.type === "Any Type") {
+        if (quiz.quizFormData.type === "Any Type") {
           typeParam = "";
         } else {
-          typeParam = `&type=${quizFormData.type}`;
+          typeParam = `&type=${quiz.quizFormData.type}`;
         }
 
-        const url = `https://opentdb.com/api.php?amount=${quizFormData.numberOfQuestions}${categoryParam}${difficultyParam}${typeParam}`;
+        const url = `https://opentdb.com/api.php?amount=${quiz.quizFormData.numberOfQuestions}${categoryParam}${difficultyParam}${typeParam}`;
         response = await axios.get(url);
-        console.log("the questions are", response.data.results);
+        quiz.questions = response.data.results;
+        console.log("the questions are", quiz.questions);
 
-        let hiddenAnswersArray = hideAnswers(response.data.results);
+        quiz.hiddenAnswersArray = hideAnswers(quiz.questions);
 
-        io.in(quizFormData.roomId).emit("quizQuestions", hiddenAnswersArray);
+        io.in(quiz.quizFormData.roomId).emit(
+          "quizQuestions",
+          quiz.hiddenAnswersArray,
+        );
       } catch (error) {
         console.log(error);
       }
@@ -100,38 +148,24 @@ const initializeSocketIoServer = (server) => {
 
     socket.on("playerReadyStatus", (playerReadyStatus) => {
       console.log(playerReadyStatus);
-      const room = Object.values(gameRooms).find((room) => {
-        return room.players.includes(playerReadyStatus.username);
-      });
+      // const room = Object.values(gameRooms).find((room) => {
+      //   return room.players.includes(playerReadyStatus.username);
+      // });
 
       if (playerReadyStatus.isPlayerReady === true) {
-        gameRooms[room.roomId].readyPlayers.push(playerReadyStatus.username);
+        room.readyPlayers.push(playerReadyStatus.username);
       }
 
       if (playerReadyStatus.isPlayerReady === false) {
-        for (
-          let i = gameRooms[room.roomId].readyPlayers.length - 1;
-          i >= 0;
-          i--
-        ) {
-          if (
-            gameRooms[room.roomId].readyPlayers[i] ===
-            playerReadyStatus.username
-          ) {
-            gameRooms[room.roomId].readyPlayers.splice(i, 1);
+        for (let i = room.readyPlayers.length - 1; i >= 0; i--) {
+          if (room.readyPlayers[i] === playerReadyStatus.username) {
+            room.readyPlayers.splice(i, 1);
           }
         }
         io.in(room.roomId).emit("countdownStopped");
       }
 
-      console.log(gameRooms[room.roomId]);
-
-      if (
-        arraysMatch(
-          gameRooms[room.roomId].readyPlayers,
-          gameRooms[room.roomId].players,
-        )
-      ) {
+      if (arraysMatch(room.readyPlayers, room.players)) {
         console.log("arrays match exactly, every user is ready");
 
         io.in(room.roomId).emit("countdownStarted", { countdownTimer: 5000 });
@@ -142,57 +176,55 @@ const initializeSocketIoServer = (server) => {
 
     socket.on("clientReadyForQuizStart", ({ username }) => {
       console.log("clientReadyForQuizStart event received from client");
-      const room = Object.values(gameRooms).find((room) => {
-        return room.players.includes(username);
-      });
+
       io.in(room.roomId).emit("quizStarted");
-      gameRooms[room.roomId].readyPlayers.length = 0;
+      room.readyPlayers.length = 0;
     });
 
     socket.on(
       // response.data.results[currentQuestionIndex].correct_answer
       "answerSubmitted",
-      ({ answerChoice, currentQuestionIndex, username, roomId }) => {
+      ({ answerChoice, currentQuestionIndex, username }) => {
         const storedAnswer =
           response.data.results[currentQuestionIndex].correct_answer;
         const questionType = response.data.results[currentQuestionIndex].type;
         const questionDifficulty =
           response.data.results[currentQuestionIndex].difficulty;
-        console.log(answerChoice, currentQuestionIndex, username, roomId);
+        console.log(answerChoice, currentQuestionIndex, username);
         const answerResult = checkAnswer(answerChoice, storedAnswer);
-        score = scoreAnswer(
+        room.scores[username] = scoreAnswer(
           answerResult,
           questionType,
           questionDifficulty,
-          score,
+          room.scores[username],
         );
-        gameRooms[roomId].scores[username] = score;
-        io.in(roomId).emit("currentScore", gameRooms[roomId].scores);
+        console.log("the current score is: ", room.scores[username]);
+        io.in(room.roomId).emit("currentScore", room.scores);
       },
     );
 
     socket.on("disconnect", () => {
-      const username = [...connections].find(([, socketId]) => {
-        return socketId === socket.id;
-      })[0];
-      console.log(`User ${username} disconnected, Socket ID: ${socket.id}`);
+      try {
+        const username = [...connections].find(([, value]) => {
+          return value.socketId === socket.id;
+        })[0];
+        console.log(`User ${username} disconnected, Socket ID: ${socket.id}`);
 
-      connections.delete(username);
-      console.log(connections);
+        connections.delete(username);
+        console.log(connections);
 
-      const room = Object.values(gameRooms).find((room) => {
-        return room.players.includes(username);
-      });
+        const updatedplayersArray = room.players.filter((player) => {
+          return player !== username;
+        });
 
-      const updatedplayersArray = room.players.filter((player) => {
-        return player !== username;
-      });
+        //update the original gameRooms object with the updatedplayersArray
 
-      //update the original gameRooms object with the updatedplayersArray
+        room.players = updatedplayersArray;
 
-      gameRooms[room.roomId].players = updatedplayersArray;
-
-      socket.to(room.roomId).emit("playerLeft", updatedplayersArray);
+        socket.to(room.roomId).emit("playerLeft", updatedplayersArray);
+      } catch (error) {
+        console.log(error);
+      }
     });
   });
 };
