@@ -1,5 +1,4 @@
 import { Box, Typography } from "@mui/material";
-import PlayerScoreCard from "./PlayerScoreCard";
 import { useSelector } from "react-redux";
 import styles from "../../Styles/styles";
 import PlayerScore from "./PlayerScore";
@@ -26,6 +25,7 @@ const PlayerList = () => {
 
   useEffect(() => {
     sortArray(players, currentScores);
+    // eslint-disable-next-line
   }, [currentScores]);
 
   return (

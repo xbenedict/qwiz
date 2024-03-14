@@ -1,5 +1,5 @@
 import AnswerChoice from "./AnswerChoice";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import Box from "@mui/material/Box";
 
 const AnswerChoices = () => {

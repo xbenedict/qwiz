@@ -6,7 +6,6 @@ import { initializeSocket } from "../../../socketIoClient/socketIoClient";
 
 const ReadyButton = () => {
   const isPlayerReady = useSelector((state) => state.quizState.isPlayerReady);
-  const quizState = useSelector((state) => state.quizState.status);
   const username = useSelector((state) => state.rooms.username);
 
   const dispatch = useDispatch();

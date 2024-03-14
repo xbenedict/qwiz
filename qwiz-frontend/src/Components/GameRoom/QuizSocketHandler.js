@@ -1,11 +1,7 @@
 import { initializeSocket } from "../../socketIoClient/socketIoClient";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import {
-  setQuizStateData,
-  setQuestions,
-  setStatus,
-} from "../../Features/Quiz/quizStateSlice";
+import { setQuestions, setStatus } from "../../Features/Quiz/quizStateSlice";
 
 const QuizSocketHandler = () => {
   const dispatch = useDispatch();
@@ -16,6 +12,7 @@ const QuizSocketHandler = () => {
       dispatch(setQuestions(questions));
       dispatch(setStatus("questionsReceived"));
     });
+    // eslint-disable-next-line
   }, []);
 };
 

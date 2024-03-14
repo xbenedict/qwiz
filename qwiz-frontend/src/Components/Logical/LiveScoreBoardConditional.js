@@ -1,11 +1,8 @@
-import { useSelector, useDispatch } from "react-redux";
-import { initializeSocket } from "../../socketIoClient/socketIoClient";
-import { setStatus } from "../../Features/Quiz/quizStateSlice";
-import { setAreAllPlayersReady } from "../../Features/Quiz/quizStateSlice";
+import { useSelector } from "react-redux";
+
 import LiveScoreBoard from "../LiveScoreBoard/LiveScoreBoard";
 
 const LiveScoreBoardConditional = () => {
-  const dispatch = useDispatch();
   const quizState = useSelector((state) => {
     return state.quizState;
   });
