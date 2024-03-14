@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { Button, TextField } from "@mui/material";
 import { styled } from "@mui/system";
-import { io } from "socket.io-client";
 import validateRoomName from "../../Validators/validateRoomName";
 import { setRoomData } from "../../Features/Rooms/roomsSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { initializeSocket } from "../../socketIoClient/socketIoClient";
 import { grantAccess } from "../../Features/Rooms/roomsAccessSlice";
@@ -26,9 +25,6 @@ const LandingPage = () => {
   const [roomId, setroomId] = useState("");
 
   const dispatch = useDispatch();
-  const roomData = useSelector((state) => {
-    return state.rooms;
-  });
 
   const navigate = useNavigate();
 

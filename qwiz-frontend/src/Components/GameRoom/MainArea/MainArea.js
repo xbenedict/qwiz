@@ -1,8 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { usePrarams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import React from "react";
 import { styled } from "@mui/system";
-import { initializeSocket } from "../../../socketIoClient/socketIoClient";
 import QuestionCardConditional from "../../Quiz/QuestionCardConditional";
 import QuizFormConditional from "../../Logical/QuizFormConditional";
 import QuestionsReceivedMessage from "../../Quiz/QuestionsReceivedMessage";

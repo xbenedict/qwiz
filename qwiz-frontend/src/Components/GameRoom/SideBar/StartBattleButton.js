@@ -4,13 +4,12 @@ import { useDispatch } from "react-redux";
 import { setIsPlayerReady } from "../../../Features/Quiz/quizStateSlice";
 import { initializeSocket } from "../../../socketIoClient/socketIoClient";
 
-const ReadyButton = () => {
+const StartBattleButton = () => {
   const isPlayerReady = useSelector((state) => state.quizState.isPlayerReady);
-  const quizState = useSelector((state) => state.quizState.status);
   const username = useSelector((state) => state.rooms.username);
+  const socket = initializeSocket();
 
   const dispatch = useDispatch();
-  const socket = initializeSocket();
 
   const playerReadyStatus = {
     username,
@@ -39,9 +38,9 @@ const ReadyButton = () => {
 
   return (
     <Button variant="contained" color="error" onClick={handleClick}>
-      Not Ready
+      Start Battle
     </Button>
   );
 };
 
-export default ReadyButton;
+export default StartBattleButton;

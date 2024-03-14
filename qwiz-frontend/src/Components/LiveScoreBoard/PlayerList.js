@@ -1,5 +1,4 @@
 import { Box, Typography } from "@mui/material";
-import PlayerScoreCard from "./PlayerScoreCard";
 import { useSelector } from "react-redux";
 import styles from "../../Styles/styles";
 import PlayerScore from "./PlayerScore";
@@ -26,7 +25,9 @@ const PlayerList = () => {
 
   useEffect(() => {
     sortArray(players, currentScores);
-  }, [currentScores]);
+  }, [currentScores, players]);
+
+  //players was added to the dependency array, based on an eslint warning, remove if functionality breaks
 
   return (
     <Box>

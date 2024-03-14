@@ -2,7 +2,6 @@ import { Typography } from "@mui/material";
 import styles from "../../Styles/styles";
 import { initializeSocket } from "../../socketIoClient/socketIoClient";
 import { useEffect } from "react";
-import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setScores } from "../../Features/Quiz/quizStateSlice";
 const PlayerScore = ({ player }) => {
@@ -17,6 +16,7 @@ const PlayerScore = ({ player }) => {
     socket.on("currentScore", (scoresObject) => {
       dispatch(setScores(scoresObject));
     });
+    // eslint-disable-next-line
   }, []);
   return (
     <Typography sx={styles.typographyStyle}>{currentScores[player]}</Typography>

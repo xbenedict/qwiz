@@ -1,10 +1,7 @@
 import { Typography, Box } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setStatus,
-  setAreAllPlayersReady,
-} from "../../Features/Quiz/quizStateSlice";
+import { setAreAllPlayersReady } from "../../Features/Quiz/quizStateSlice";
 import { initializeSocket } from "../../socketIoClient/socketIoClient";
 
 const CountdownTimerConditional = () => {
@@ -27,6 +24,7 @@ const CountdownTimerConditional = () => {
       socket.off("countdownStarted");
       socket.off("countdownStopped");
     };
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -52,6 +50,7 @@ const CountdownTimerConditional = () => {
         clearInterval(interval);
       }
     };
+    // eslint-disable-next-line
   }, [areAllPlayersReady, quizStatus]);
 
   const handleCountdownStarted = ({ countdownTimer }) => {
