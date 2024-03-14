@@ -15,7 +15,7 @@ const Room = require("./src/Data Structures/Room");
 const initializeSocketIoServer = (server) => {
   const io = socketIo(server, {
     cors: {
-      origin: "https://qwiz.app", // remember to replace with your frontend's URL in production
+      origin: ["https://qwiz.app", "https://backend.qwiz.app"], // remember to replace with your frontend's URL in production
       methods: ["GET", "POST"],
     },
   });
