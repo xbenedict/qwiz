@@ -1,7 +1,14 @@
 Qwiz - Real-Time Online Multiplayer Quiz Battle
 Qwiz Logo
 
-Qwiz is an exciting real-time online multiplayer quiz battle application that challenges players' knowledge and reflexes. Developed by [Your Name], Qwiz offers a dynamic and engaging user experience, allowing players to compete against each other in fast-paced quiz battles.
+Live Demo:
+
+https://qwiz.app
+
+Qwiz is an exciting real-time online multiplayer quiz battle application that challenges players' knowledge and reflexes, allowing players to compete against each other in fast-paced quiz battles.
+
+
+Developed by Fadi Awwad
 
 Features
 Real-time multiplayer gameplay
