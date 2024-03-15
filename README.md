@@ -4,7 +4,7 @@
 
 ## Live Demo
 
-Qwiz App
+http://qwiz.app
 
 Qwiz is an exciting real-time online multiplayer quiz battle application that challenges players' knowledge and reflexes, allowing players to compete against each other in fast-paced quiz battles.
 
